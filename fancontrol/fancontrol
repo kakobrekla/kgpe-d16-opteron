@@ -649,6 +649,16 @@ function UpdateFanSpeeds
 	done
 }
 
+function UpdateVirtualTempSensor
+{
+	read cputemp1 < "/sys/class/hwmon/hwmon1/device/temp7_input"
+	read cputemp2 < "/sys/class/hwmon/hwmon1/device/temp8_input"
+
+	#cpu_virtual=$(bc <<< "($cputemp1+$cputemp2)/2")
+	cpu_virtual=$([ $cputemp1 -ge $cputemp2 ] && echo "$cputemp1" || echo "$cputemp2")
+	echo $cpu_virtual > "/tmp/temp0"
+}
+
 echo 'Enabling PWM on fans...'
 let fcvcount=0
 while (( $fcvcount < ${#AFCPWM[@]} )) # go through all pwm outputs
@@ -668,6 +678,7 @@ echo 'Starting automatic fan control...'
 # main loop calling the main function at specified intervals
 while true
 do
+	UpdateVirtualTempSensor
 	UpdateFanSpeeds
 	# Sleep while still handling signals
 	sleep $INTERVAL &
