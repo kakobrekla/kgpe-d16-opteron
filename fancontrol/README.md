@@ -1,0 +1,2 @@
+Original script taken from https://github.com/lm-sensors/lm-sensors/blob/master/prog/pwm/fancontrol
+You may find it as such in `/usr/sbin/fancontrol` if you install lm-sensors (inc. pwmconfig, fancontrol).
