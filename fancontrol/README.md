@@ -11,12 +11,14 @@ Not only VC provides worse fan control than PWM, VC can (and does) introduce add
 
 Patch:
 
-- in fancontol we have a new function `UpdateVirtualTempSensor` which takes two temp sensor inputs `temp7_input` and `temp8_input`, upon which a custom transformation can be applied -- in our case we use `max(temp1, temp2)`. Resulting value is fed in a file in `/tmp/temp0`.
+- in `fancontol` script we have a new function `UpdateVirtualTempSensor` which takes two temp sensor inputs `temp7_input` and `temp8_input`, upon which a custom transformation can be applied -- in our case we use `max(temp1, temp2)`. Tune the algo to you liking here. Resulting value is written to a file `/tmp/temp0`.
 
-- in configuration file we point the temperature source as `FCTEMPS=hwmon1/device/pwm1=../../../tmp/temp0` which tricks `fancontrol` to read temperature from our custom file instead of single sensor `/sys/class/hwmon/hwmon1/device/temp7_input`.
+- in fanctonrol configuration file simply point the temperature source to `FCTEMPS=hwmon1/device/pwm1=../../../tmp/temp0` which tricks `fancontrol` to read temperature value (transformed as desired) from the specified file instead of single sensor `/sys/class/hwmon/hwmon1/device/temp7_input` (CPU1) or `/sys/class/hwmon/hwmon1/device/temp8_input` (CPU2).
 
 
 Notes:
+
+In (my) case coreboot/libreboot does not detect/recognize the sensors when `pwmconfig` is ran, following is the correct config:
 
 ```
 cat /etc/modules
